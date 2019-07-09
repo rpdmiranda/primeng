@@ -1,6 +1,6 @@
 {
     "name": "primeng",
-    "version": "8.0.2-SNAPSHOT",
+    "version": "8.0.1-fixes.0",
     "license": "MIT",
     "scripts": {
       "ng": "ng",
@@ -66,4 +66,3 @@
       "zone.js": "~0.9.1"
     }
   }
-  
