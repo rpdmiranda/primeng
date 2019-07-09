@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,9 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { NgModule, Directive, ElementRef, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DomHandler } from '../dom/domhandler';
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@angular/core");
+var common_1 = require("@angular/common");
+var domhandler_1 = require("../dom/domhandler");
 var FocusTrap = /** @class */ (function () {
     function FocusTrap(el) {
         this.el = el;
@@ -17,7 +19,7 @@ var FocusTrap = /** @class */ (function () {
     FocusTrap.prototype.onkeydown = function (e) {
         if (e.which === 9) {
             event.preventDefault();
-            var focusableElements = DomHandler.getFocusableElements(this.el.nativeElement);
+            var focusableElements = domhandler_1.DomHandler.getFocusableElements(this.el.nativeElement);
             if (focusableElements && focusableElements.length > 0) {
                 if (!document.activeElement) {
                     focusableElements[0].focus();
@@ -41,31 +43,31 @@ var FocusTrap = /** @class */ (function () {
         }
     };
     __decorate([
-        HostListener('keydown', ['$event']),
+        core_1.HostListener('keydown', ['$event']),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", void 0)
     ], FocusTrap.prototype, "onkeydown", null);
     FocusTrap = __decorate([
-        Directive({
+        core_1.Directive({
             selector: '[pFocusTrap]',
         }),
-        __metadata("design:paramtypes", [ElementRef])
+        __metadata("design:paramtypes", [core_1.ElementRef])
     ], FocusTrap);
     return FocusTrap;
 }());
-export { FocusTrap };
+exports.FocusTrap = FocusTrap;
 var FocusTrapModule = /** @class */ (function () {
     function FocusTrapModule() {
     }
     FocusTrapModule = __decorate([
-        NgModule({
-            imports: [CommonModule],
+        core_1.NgModule({
+            imports: [common_1.CommonModule],
             exports: [FocusTrap],
             declarations: [FocusTrap]
         })
     ], FocusTrapModule);
     return FocusTrapModule;
 }());
-export { FocusTrapModule };
+exports.FocusTrapModule = FocusTrapModule;
 //# sourceMappingURL=focustrap.js.map
