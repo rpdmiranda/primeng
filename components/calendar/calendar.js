@@ -22,11 +22,14 @@ exports.CALENDAR_VALUE_ACCESSOR = {
     multi: true
 };
 var Calendar = /** @class */ (function () {
-    function Calendar(el, renderer, cd) {
+    function Calendar(el, renderer, cd, zone) {
         this.el = el;
         this.renderer = renderer;
         this.cd = cd;
+        this.zone = zone;
         this.dateFormat = 'mm/dd/yy';
+        this.multipleSeparator = ',';
+        this.rangeSeparator = '-';
         this.inline = false;
         this.showOtherMonths = true;
         this.icon = 'pi pi-calendar';
@@ -320,6 +323,7 @@ var Calendar = /** @class */ (function () {
         }
     };
     Calendar.prototype.navBackward = function (event) {
+        event.stopPropagation();
         if (this.disabled) {
             event.preventDefault();
             return;
@@ -340,6 +344,7 @@ var Calendar = /** @class */ (function () {
         }
     };
     Calendar.prototype.navForward = function (event) {
+        event.stopPropagation();
         if (this.disabled) {
             event.preventDefault();
             return;
@@ -431,7 +436,7 @@ var Calendar = /** @class */ (function () {
                     var dateAsString = this.formatDateTime(this.value[i]);
                     formattedValue += dateAsString;
                     if (i !== (this.value.length - 1)) {
-                        formattedValue += ', ';
+                        formattedValue += this.multipleSeparator + ' ';
                     }
                 }
             }
@@ -441,7 +446,7 @@ var Calendar = /** @class */ (function () {
                     var endDate = this.value[1];
                     formattedValue = this.formatDateTime(startDate);
                     if (endDate) {
-                        formattedValue += ' - ' + this.formatDateTime(endDate);
+                        formattedValue += ' ' + this.rangeSeparator + ' ' + this.formatDateTime(endDate);
                     }
                 }
             }
@@ -608,7 +613,7 @@ var Calendar = /** @class */ (function () {
         }
     };
     Calendar.prototype.isMonthSelected = function (month) {
-        return this.value ? (this.value.getMonth() === month && this.value.getFullYear() === this.currentYear) : false;
+        return this.isSelected({ year: this.currentYear, month: month, day: 1, selectable: true });
     };
     Calendar.prototype.isDateEquals = function (value, dateMeta) {
         if (value)
@@ -736,10 +741,7 @@ var Calendar = /** @class */ (function () {
     Calendar.prototype.onInputKeydown = function (event) {
         this.isKeydown = true;
         if (event.keyCode === 9) {
-            if (this.touchUI)
-                this.disableModality();
-            else
-                this.hideOverlay();
+            this.hideOverlay();
         }
     };
     Calendar.prototype.onMonthDropdownChange = function (m) {
@@ -1012,7 +1014,7 @@ var Calendar = /** @class */ (function () {
             value = this.parseDateTime(text);
         }
         else if (this.isMultipleSelection()) {
-            var tokens = text.split(',');
+            var tokens = text.split(this.multipleSeparator);
             value = [];
             for (var _i = 0, tokens_1 = tokens; _i < tokens_1.length; _i++) {
                 var token = tokens_1[_i];
@@ -1020,7 +1022,7 @@ var Calendar = /** @class */ (function () {
             }
         }
         else if (this.isRangeSelection()) {
-            var tokens = text.split(' - ');
+            var tokens = text.split(' ' + this.rangeSeparator + ' ');
             value = [];
             for (var i = 0; i < tokens.length; i++) {
                 value[i] = this.parseDateTime(tokens[i].trim());
@@ -1499,11 +1501,15 @@ var Calendar = /** @class */ (function () {
     Calendar.prototype.bindDocumentClickListener = function () {
         var _this = this;
         if (!this.documentClickListener) {
-            this.documentClickListener = this.renderer.listen('document', 'click', function (event) {
-                if (_this.isOutsideClicked(event) && _this.overlayVisible) {
-                    _this.hideOverlay();
-                }
-                _this.cd.detectChanges();
+            this.zone.runOutsideAngular(function () {
+                _this.documentClickListener = _this.renderer.listen('document', 'click', function (event) {
+                    if (_this.isOutsideClicked(event) && _this.overlayVisible) {
+                        _this.zone.run(function () {
+                            _this.hideOverlay();
+                        });
+                    }
+                    _this.cd.markForCheck();
+                });
             });
         }
     };
@@ -1589,6 +1595,14 @@ var Calendar = /** @class */ (function () {
         core_1.Input(),
         __metadata("design:type", String)
     ], Calendar.prototype, "dateFormat", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String)
+    ], Calendar.prototype, "multipleSeparator", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String)
+    ], Calendar.prototype, "rangeSeparator", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", Boolean)
@@ -1867,7 +1881,7 @@ var Calendar = /** @class */ (function () {
             },
             providers: [exports.CALENDAR_VALUE_ACCESSOR]
         }),
-        __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer2, core_1.ChangeDetectorRef])
+        __metadata("design:paramtypes", [core_1.ElementRef, core_1.Renderer2, core_1.ChangeDetectorRef, core_1.NgZone])
     ], Calendar);
     return Calendar;
 }());

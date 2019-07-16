@@ -21,9 +21,12 @@ function View_OverlayPanel_2(_l) { return i0.ɵvid(0, [(_l()(), i0.ɵeld(0, 0, n
         var pd_1 = (_co.hide() !== false);
         ad = (pd_1 && ad);
     } return ad; }, null, null)), (_l()(), i0.ɵeld(1, 0, null, null, 0, "span", [["class", "ui-overlaypanel-close-icon pi pi-times"]], null, null, null, null, null))], null, null); }
-function View_OverlayPanel_1(_l) { return i0.ɵvid(0, [(_l()(), i0.ɵeld(0, 0, null, null, 10, "div", [], [[24, "@animation", 0]], [[null, "@animation.start"]], function (_v, en, $event) { var ad = true; var _co = _v.component; if (("@animation.start" === en)) {
-        var pd_0 = (_co.onAnimationStart($event) !== false);
+function View_OverlayPanel_1(_l) { return i0.ɵvid(0, [(_l()(), i0.ɵeld(0, 0, null, null, 10, "div", [], [[24, "@animation", 0]], [[null, "click"], [null, "@animation.start"]], function (_v, en, $event) { var ad = true; var _co = _v.component; if (("click" === en)) {
+        var pd_0 = (_co.onContainerClick() !== false);
         ad = (pd_0 && ad);
+    } if (("@animation.start" === en)) {
+        var pd_1 = (_co.onAnimationStart($event) !== false);
+        ad = (pd_1 && ad);
     } return ad; }, null, null)), i0.ɵprd(512, null, i2.ɵNgClassImpl, i2.ɵNgClassR2Impl, [i0.IterableDiffers, i0.KeyValueDiffers, i0.ElementRef, i0.Renderer2]), i0.ɵdid(2, 278528, null, 0, i2.NgClass, [i2.ɵNgClassImpl], { klass: [0, "klass"], ngClass: [1, "ngClass"] }, null), i0.ɵprd(512, null, i2.ɵNgStyleImpl, i2.ɵNgStyleR2Impl, [i0.ElementRef, i0.KeyValueDiffers, i0.Renderer2]), i0.ɵdid(4, 278528, null, 0, i2.NgStyle, [i2.ɵNgStyleImpl], { ngStyle: [0, "ngStyle"] }, null), i0.ɵpod(5, { showTransitionParams: 0, hideTransitionParams: 1 }), i0.ɵpod(6, { value: 0, params: 1 }), (_l()(), i0.ɵeld(7, 0, null, null, 1, "div", [["class", "ui-overlaypanel-content"]], null, null, null, null, null)), i0.ɵncd(null, 0), (_l()(), i0.ɵand(16777216, null, null, 1, null, View_OverlayPanel_2)), i0.ɵdid(10, 16384, null, 0, i2.NgIf, [i0.ViewContainerRef, i0.TemplateRef], { ngIf: [0, "ngIf"] }, null)], function (_ck, _v) { var _co = _v.component; var currVal_1 = _co.styleClass; var currVal_2 = "ui-overlaypanel ui-widget ui-widget-content ui-corner-all ui-shadow"; _ck(_v, 2, 0, currVal_1, currVal_2); var currVal_3 = _co.style; _ck(_v, 4, 0, currVal_3); var currVal_4 = _co.showCloseIcon; _ck(_v, 10, 0, currVal_4); }, function (_ck, _v) { var _co = _v.component; var currVal_0 = _ck(_v, 6, 0, "visible", _ck(_v, 5, 0, _co.showTransitionOptions, _co.hideTransitionOptions)); _ck(_v, 0, 0, currVal_0); }); }
 function View_OverlayPanel_0(_l) { return i0.ɵvid(0, [(_l()(), i0.ɵand(16777216, null, null, 1, null, View_OverlayPanel_1)), i0.ɵdid(1, 16384, null, 0, i2.NgIf, [i0.ViewContainerRef, i0.TemplateRef], { ngIf: [0, "ngIf"] }, null)], function (_ck, _v) { var _co = _v.component; var currVal_0 = _co.visible; _ck(_v, 1, 0, currVal_0); }, null); }
 exports.View_OverlayPanel_0 = View_OverlayPanel_0;
