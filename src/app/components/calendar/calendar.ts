@@ -1,5 +1,5 @@
 import {NgModule,Component,ElementRef,OnDestroy,OnInit,Input,Output,SimpleChange,EventEmitter,forwardRef,Renderer2,
-        ViewChild,ChangeDetectorRef,TemplateRef,ContentChildren,QueryList} from '@angular/core';
+        ViewChild,ChangeDetectorRef,TemplateRef,ContentChildren,QueryList, NgZone} from '@angular/core';
 import {trigger,state,style,transition,animate,AnimationEvent} from '@angular/animations';
 import {CommonModule} from '@angular/common';
 import {ButtonModule} from '../button/button';
@@ -237,6 +237,10 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
     @Input() disabled: any;
     
     @Input() dateFormat: string = 'mm/dd/yy';
+
+    @Input() multipleSeparator: string = ',';
+
+    @Input() rangeSeparator: string = '-';
     
     @Input() inline: boolean = false;
     
@@ -527,7 +531,7 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
        }
     }
 
-    constructor(public el: ElementRef, public renderer: Renderer2, public cd: ChangeDetectorRef) {}
+    constructor(public el: ElementRef, public renderer: Renderer2, public cd: ChangeDetectorRef, private zone: NgZone) {}
 
     ngOnInit() {
         const date = this.defaultDate||new Date();
@@ -685,6 +689,8 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
     }
     
     navBackward(event) {
+        event.stopPropagation();
+        
         if (this.disabled) {
             event.preventDefault();
             return;
@@ -708,6 +714,8 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
     }
     
     navForward(event) {
+        event.stopPropagation();
+
         if (this.disabled) {
             event.preventDefault();
             return;
@@ -814,7 +822,7 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
                     let dateAsString = this.formatDateTime(this.value[i]);
                     formattedValue += dateAsString;
                     if (i !== (this.value.length - 1)) {
-                        formattedValue += ', ';
+                        formattedValue += this.multipleSeparator+' ';
                     }
                 }
             }
@@ -825,7 +833,7 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
                     
                     formattedValue = this.formatDateTime(startDate);
                     if (endDate) {
-                        formattedValue += ' - ' + this.formatDateTime(endDate);
+                        formattedValue += ' '+this.rangeSeparator +' ' + this.formatDateTime(endDate);
                     }
                 }
             }
@@ -1018,7 +1026,7 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
     }
 
     isMonthSelected(month: number): boolean {
-        return this.value ? (this.value.getMonth() === month && this.value.getFullYear() === this.currentYear) : false;
+        return this.isSelected({year: this.currentYear, month: month, day: 1, selectable: true});
     }
     
     isDateEquals(value, dateMeta) {
@@ -1167,10 +1175,7 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
     onInputKeydown(event) {
         this.isKeydown = true;
         if (event.keyCode === 9) {
-            if (this.touchUI)
-                this.disableModality();
-            else
-                this.hideOverlay();
+            this.hideOverlay();
         }
     }
     
@@ -1489,14 +1494,14 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
             value = this.parseDateTime(text);
         }
         else if (this.isMultipleSelection()) {
-            let tokens = text.split(',');
+            let tokens = text.split(this.multipleSeparator);
             value = [];
             for (let token of tokens) {
                 value.push(this.parseDateTime(token.trim()));
             }
         }
         else if (this.isRangeSelection()) {
-            let tokens = text.split(' - ');
+            let tokens = text.split(' '+this.rangeSeparator +' ');
             value = [];
             for (let i = 0; i < tokens.length; i++) {
                 value[i] = this.parseDateTime(tokens[i].trim());
@@ -2055,12 +2060,16 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
     
     bindDocumentClickListener() {
         if (!this.documentClickListener) {
-            this.documentClickListener = this.renderer.listen('document', 'click', (event) => {
-                if (this.isOutsideClicked(event) && this.overlayVisible) {
-                    this.hideOverlay();
-                }
-
-                this.cd.detectChanges();
+            this.zone.runOutsideAngular(() => {
+                this.documentClickListener = this.renderer.listen('document', 'click', (event) => {
+                    if (this.isOutsideClicked(event) && this.overlayVisible) {
+                        this.zone.run(() => {
+                            this.hideOverlay();
+                        });
+                    }
+                    
+                    this.cd.markForCheck();
+                });
             });
         }
     }
