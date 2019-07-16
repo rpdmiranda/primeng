@@ -1,5 +1,5 @@
 npm install
 node_modules\.bin\sass --update src/assets/components
-gulp build-assets
+node_modules\.bin\gulp build-assets
 node_modules\.bin\ngc -p tsconfig-release.json
 npm push
