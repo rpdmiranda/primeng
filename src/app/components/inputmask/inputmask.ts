@@ -39,7 +39,7 @@ export const INPUTMASK_VALUE_ACCESSOR: any = {
 
 @Component({
     selector: 'p-inputMask',
-    template: `<input #input pInputText [attr.id]="inputId" [attr.type]="type" [attr.name]="name" [ngStyle]="style" [ngClass]="styleClass" [attr.placeholder]="placeholder"
+    template: `<input #input pInputText [attr.id]="inputId" [attr.type]="type" [attr.name]="name" [ngStyle]="style" [ngClass]="styleClass" [attr.placeholder]="placeholder" [attr.title]="title"
         [attr.size]="size" [attr.autocomplete]="autocomplete" [attr.maxlength]="maxlength" [attr.tabindex]="tabindex" [attr.aria-label]="ariaLabel" [attr.aria-required]="ariaRequired" [disabled]="disabled" [readonly]="readonly" [attr.required]="required"
         (focus)="onInputFocus($event)" (blur)="onInputBlur($event)" (keydown)="onKeyDown($event)" (keypress)="onKeyPress($event)" [attr.autofocus]="autoFocus"
         (input)="onInputChange($event)" (paste)="handleInputChange($event)">`,
@@ -70,9 +70,11 @@ export class InputMask implements OnInit,OnDestroy,ControlValueAccessor {
     @Input() maxlength: number;
 
     @Input() tabindex: string;
-    
+
+    @Input() title: string;
+
     @Input() ariaLabel: string;
-     
+
     @Input() ariaRequired: boolean;
 
     @Input() disabled: boolean;
@@ -91,7 +93,7 @@ export class InputMask implements OnInit,OnDestroy,ControlValueAccessor {
 
     @Input() autocomplete: string;
 
-    @ViewChild('input', { static: false }) inputViewChild: ElementRef;
+    @ViewChild('input', { static: true }) inputViewChild: ElementRef;
 
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
 
@@ -361,7 +363,7 @@ export class InputMask implements OnInit,OnDestroy,ControlValueAccessor {
             this.checkVal(true);
             while (pos.begin < this.len && !this.tests[pos.begin])
                 pos.begin++;
-                
+
             setTimeout(() => {
                 this.caret(pos.begin, pos.begin);
                 this.updateModel(e);

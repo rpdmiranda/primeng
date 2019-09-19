@@ -1,5 +1,78 @@
 # Change Log
 
+## [8.0.3](https://github.com/primefaces/primeng/tree/8.0.3) (2019-09-05)
+
+[Full Changelog](https://github.com/primefaces/primeng/compare/8.0.2...8.0.3)
+
+**Implemented New Features and Enhancements:**
+
+- Add originalEvent to cellEdit events [\#8111](https://github.com/primefaces/primeng/issues/8111)
+- ListBox - Add selected option value to onClick and onDblClick [\#8108](https://github.com/primefaces/primeng/issues/8108)
+- Add tabindex property to Slider [\#8100](https://github.com/primefaces/primeng/issues/8100)
+- Add Tabindex Property to MenuItem [\#8089](https://github.com/primefaces/primeng/issues/8089)
+- Add unique attribute to Autocomplete [\#8067](https://github.com/primefaces/primeng/issues/8067)
+- Textarea AutoResize Improvements [\#7778](https://github.com/primefaces/primeng/issues/7778)
+- Keyboard support for Slider component [\#4237](https://github.com/primefaces/primeng/issues/4237)
+- Add readonly to Checkbox and TriStateCheckbox [\#2999](https://github.com/primefaces/primeng/issues/2999)
+- More search filters for searchable components \(Dropdown Multiselect Listbox etc\) [\#953](https://github.com/primefaces/primeng/issues/953)
+
+**Fixed bugs:**
+
+- MultiSelect: selectionLimit causes options to be in disabled-state [\#8116](https://github.com/primefaces/primeng/issues/8116)
+- p-spinner does not clear when \[\(ngModel\)\] is assign to null or undefined [\#8114](https://github.com/primefaces/primeng/issues/8114)
+- Calendar overlay doesn't disappear in OnPush components. [\#8102](https://github.com/primefaces/primeng/issues/8102)
+- p-spinner min validator works only for first time [\#8095](https://github.com/primefaces/primeng/issues/8095)
+- The FocusTrap directive throws a JS exception on browsers [\#8075](https://github.com/primefaces/primeng/issues/8075)
+- The emptyMessage attribute is not working correctly with empty value array [\#8065](https://github.com/primefaces/primeng/issues/8065)
+- p-dropdown only sets `filled` on click, not on select \(doesn't work with keyboard\) [\#8059](https://github.com/primefaces/primeng/issues/8059)
+- Calendar view="month" does not highlight month unless manually clicked [\#8055](https://github.com/primefaces/primeng/issues/8055)
+- The left and right arrow keys not working on input elements inside Tree [\#8039](https://github.com/primefaces/primeng/issues/8039)
+- TabMenu Templating not working [\#8031](https://github.com/primefaces/primeng/issues/8031)
+- dropdown throws "event is not defined" error in PrimeNG v8.0.2 on Firefox [\#8003](https://github.com/primefaces/primeng/issues/8003)
+- The yearRange's value is not set on Calendar [\#7996](https://github.com/primefaces/primeng/issues/7996)
+- p-inputMask with angular 8 doesn't set value [\#7979](https://github.com/primefaces/primeng/issues/7979)
+- Typing times between 12:00AM-12:59AM save as PM [\#7977](https://github.com/primefaces/primeng/issues/7977)
+- Selected item in drop-down with virtual scrolling does not always stay into view [\#7963](https://github.com/primefaces/primeng/issues/7963)
+- forceSelection not clearing invalid single numbers/strings  [\#7841](https://github.com/primefaces/primeng/issues/7841)
+
+**Unit Tests:**
+
+- Unit Tests Need Improvement [\#8025](https://github.com/primefaces/primeng/issues/8025)
+- FilterUtils Unit Test [\#8007](https://github.com/primefaces/primeng/issues/8007)
+
+## [8.0.2](https://github.com/primefaces/primeng/tree/8.0.2) (2019-07-24)
+
+[Full Changelog](https://github.com/primefaces/primeng/compare/8.0.1...8.0.2)
+
+**Implemented New Features and Enhancements:**
+
+- Update FullCalendar to 4.1.0 [\#7980](https://github.com/primefaces/primeng/issues/7980)
+- Add Range Separator to Calendar [\#7947](https://github.com/primefaces/primeng/issues/7947)
+- Add Multiple Separator to Calendar  [\#7946](https://github.com/primefaces/primeng/issues/7946)
+- ContextMenu does not expose Show / Hide events [\#7934](https://github.com/primefaces/primeng/issues/7934)
+- FileLimit on FileUpload [\#7906](https://github.com/primefaces/primeng/issues/7906)
+- range and multiple mode support for Month Picker [\#7130](https://github.com/primefaces/primeng/issues/7130)
+- Shift Key selection for Tree [\#4216](https://github.com/primefaces/primeng/issues/4216)
+
+**Fixed bugs:**
+
+- ExpressionChangedAfterItHasBeenCheckedError when preselect a p-radioButton [\#7940](https://github.com/primefaces/primeng/issues/7940)
+- Multiselect doesn't disable options if selectionLimit reached by default value [\#7187](https://github.com/primefaces/primeng/issues/7187)
+- emptyMessage template is duplicated if table has frozen columns [\#7658](https://github.com/primefaces/primeng/issues/7658)
+- Update and clear function is calling when disabled in File Upload Advanced [\#7974](https://github.com/primefaces/primeng/issues/7974)
+- Multiselect throws error at isAllChecked [\#7950](https://github.com/primefaces/primeng/issues/7950)
+- Calendar is not working correctly in overlayPanel [\#7939](https://github.com/primefaces/primeng/issues/7939)
+- Accordion ExpressionChangedAfterItHasBeenCheckedError [\#7923](https://github.com/primefaces/primeng/issues/7923)
+- ConfirmDialog is blurry when opened [\#7919](https://github.com/primefaces/primeng/issues/7919)
+- Calendar touchUI issue with tab key [\#7907](https://github.com/primefaces/primeng/issues/7907)
+- p-dropdown not closing when clicking outside of the control itself [\#7904](https://github.com/primefaces/primeng/issues/7904)
+- FileUpload inital files preview is not working [\#7901](https://github.com/primefaces/primeng/issues/7901)
+- Overlay panel arrow displayed on the wrong side in IE [\#7832](https://github.com/primefaces/primeng/issues/7832)
+- On table when filter change "first" is changed after onLazyLoad call [\#7795](https://github.com/primefaces/primeng/issues/7795)
+- Only inside p-overlayPanel, p-calendar has month/year navigation problem [\#7693](https://github.com/primefaces/primeng/issues/7693)
+- p-calendar closes when clicking previous or next month from within editable table cell [\#7441](https://github.com/primefaces/primeng/issues/7441)
+- Calendar - Unexpected behaviour when date format contains whitespace characters and showTime is enabled [\#6521](https://github.com/primefaces/primeng/issues/6521)
+
 ## [8.0.1](https://github.com/primefaces/primeng/tree/8.0.1) (2019-07-08)
 
 [Full Changelog](https://github.com/primefaces/primeng/compare/8.0.0...8.0.1)

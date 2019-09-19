@@ -120,6 +120,8 @@ export class AutoComplete implements AfterViewChecked,AfterContentInit,DoCheck,O
 
     @Input() dropdownIcon: string = "pi pi-caret-down";
 
+    @Input() unique: boolean = true;
+
     @Output() completeMethod: EventEmitter<any> = new EventEmitter();
 
     @Output() onSelect: EventEmitter<any> = new EventEmitter();
@@ -331,7 +333,8 @@ export class AutoComplete implements AfterViewChecked,AfterContentInit,DoCheck,O
     }
 
     onInput(event: Event) {
-        if (!this.inputKeyDown) {
+        // When an input element with a placeholder is clicked, the onInput event is invoked in IE.
+        if (!this.inputKeyDown && DomHandler.isIE()) {
             return;
         }
 
@@ -395,7 +398,7 @@ export class AutoComplete implements AfterViewChecked,AfterContentInit,DoCheck,O
         if (this.multiple) {
             this.multiInputEL.nativeElement.value = '';
             this.value = this.value||[];
-            if (!this.isSelected(option)) {
+            if (!this.isSelected(option) || !this.unique) {
                 this.value = [...this.value,option];
                 this.onModelChange(this.value);
             }

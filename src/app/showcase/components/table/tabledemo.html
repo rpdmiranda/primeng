@@ -306,7 +306,8 @@ export class DynamicColumnsDemo implements OnInit &#123;
                         </tr>
                         <tr>
                             <td>emptymessage</td>
-                            <td>$implicit: Columns</td>
+                            <td>$implicit: Columns <br />
+                                frozen: Whether the body belongs to the frozen part of the table.</td>
                             <td>Content to display when there is no value to display.</td>
                         </tr>
                         <tr>
@@ -2495,7 +2496,7 @@ export class TableDemo implements OnInit &#123;
                             <td>rowHover</td>
                             <td>boolean</td>
                             <td>false</td>
-                            <td>Adds hover effect to rows without the need for selectionMode.</td>
+                            <td>Adds hover effect to rows without the need for selectionMode. Note that tr elements that can be hovered need to have "ui-selectable-row" class for rowHover to work.</td>
                         </tr>
                         <tr>
                             <td>paginatorDropdownAppendTo</td>
@@ -2654,22 +2655,22 @@ export class TableDemo implements OnInit &#123;
                         </tr>
                         <tr>
                             <td>onEditInit</td>
-                            <td>event.column: Column object of the cell<br>
+                            <td>event.field: Column object of the cell<br>
                                 event.data: Row data</td>
                             <td>Callback to invoke when a cell switches to edit mode.</td>
                         </tr>
                         <tr>
                             <td>onEditComplete</td>
-                            <td>event.column: Column object of the cell<br>
+                            <td>event.field: Column object of the cell<br>
                                 event.data: Row data <br />
-                                event.index: Row index</td>
+                                event.originalEvent: Browser event</td>
                             <td>Callback to invoke when cell edit is completed.</td>
                         </tr>
                         <tr>
                             <td>onEditCancel</td>
-                            <td>event.column: Column object of the cell<br>
+                            <td>event.field: Column object of the cell<br>
                                 event.data: Row data <br />
-                                event.index: Row index</td>
+                                event.originalEvent: Browser event</td>
                             <td>Callback to invoke when cell edit is cancelled with escape key.</td>
                         </tr>
                         <tr>
