@@ -31,6 +31,7 @@ export declare class AutoComplete implements AfterViewChecked, AfterContentInit,
     ariaLabel: string;
     ariaLabelledBy: string;
     dropdownIcon: string;
+    unique: boolean;
     completeMethod: EventEmitter<any>;
     onSelect: EventEmitter<any>;
     onUnselect: EventEmitter<any>;

@@ -20,6 +20,7 @@ var domhandler_1 = require("../dom/domhandler");
 var objectutils_1 = require("../utils/objectutils");
 var core_2 = require("@angular/core");
 var rxjs_1 = require("rxjs");
+var filterutils_1 = require("../utils/filterutils");
 var TableService = /** @class */ (function () {
     function TableService() {
         this.sortSource = new rxjs_1.Subject();
@@ -120,131 +121,13 @@ var Table = /** @class */ (function () {
         this._first = 0;
         this.selectionKeys = {};
         this._sortOrder = 1;
-        this.filterConstraints = {
-            startsWith: function (value, filter) {
-                if (filter === undefined || filter === null || filter.trim() === '') {
-                    return true;
-                }
-                if (value === undefined || value === null) {
-                    return false;
-                }
-                var filterValue = objectutils_1.ObjectUtils.removeAccents(filter.toString()).toLowerCase();
-                var stringValue = objectutils_1.ObjectUtils.removeAccents(value.toString()).toLowerCase();
-                return stringValue.slice(0, filterValue.length) === filterValue;
-            },
-            contains: function (value, filter) {
-                if (filter === undefined || filter === null || (typeof filter === 'string' && filter.trim() === '')) {
-                    return true;
-                }
-                if (value === undefined || value === null) {
-                    return false;
-                }
-                var filterValue = objectutils_1.ObjectUtils.removeAccents(filter.toString()).toLowerCase();
-                var stringValue = objectutils_1.ObjectUtils.removeAccents(value.toString()).toLowerCase();
-                return stringValue.indexOf(filterValue) !== -1;
-            },
-            endsWith: function (value, filter) {
-                if (filter === undefined || filter === null || filter.trim() === '') {
-                    return true;
-                }
-                if (value === undefined || value === null) {
-                    return false;
-                }
-                var filterValue = objectutils_1.ObjectUtils.removeAccents(filter.toString()).toLowerCase();
-                var stringValue = objectutils_1.ObjectUtils.removeAccents(value.toString()).toLowerCase();
-                return stringValue.indexOf(filterValue, stringValue.length - filterValue.length) !== -1;
-            },
-            equals: function (value, filter) {
-                if (filter === undefined || filter === null || (typeof filter === 'string' && filter.trim() === '')) {
-                    return true;
-                }
-                if (value === undefined || value === null) {
-                    return false;
-                }
-                if (value.getTime && filter.getTime)
-                    return value.getTime() === filter.getTime();
-                else
-                    return objectutils_1.ObjectUtils.removeAccents(value.toString()).toLowerCase() == objectutils_1.ObjectUtils.removeAccents(filter.toString()).toLowerCase();
-            },
-            notEquals: function (value, filter) {
-                if (filter === undefined || filter === null || (typeof filter === 'string' && filter.trim() === '')) {
-                    return false;
-                }
-                if (value === undefined || value === null) {
-                    return true;
-                }
-                if (value.getTime && filter.getTime)
-                    return value.getTime() !== filter.getTime();
-                else
-                    return objectutils_1.ObjectUtils.removeAccents(value.toString()).toLowerCase() != objectutils_1.ObjectUtils.removeAccents(filter.toString()).toLowerCase();
-            },
-            in: function (value, filter) {
-                if (filter === undefined || filter === null || filter.length === 0) {
-                    return true;
-                }
-                if (value === undefined || value === null) {
-                    return false;
-                }
-                for (var i = 0; i < filter.length; i++) {
-                    if (filter[i] === value || (value.getTime && filter[i].getTime && value.getTime() === filter[i].getTime())) {
-                        return true;
-                    }
-                }
-                return false;
-            },
-            lt: function (value, filter) {
-                if (filter === undefined || filter === null) {
-                    return true;
-                }
-                if (value === undefined || value === null) {
-                    return false;
-                }
-                if (value.getTime && filter.getTime)
-                    return value.getTime() < filter.getTime();
-                else
-                    return value < filter;
-            },
-            lte: function (value, filter) {
-                if (filter === undefined || filter === null) {
-                    return true;
-                }
-                if (value === undefined || value === null) {
-                    return false;
-                }
-                if (value.getTime && filter.getTime)
-                    return value.getTime() <= filter.getTime();
-                else
-                    return value <= filter;
-            },
-            gt: function (value, filter) {
-                if (filter === undefined || filter === null) {
-                    return true;
-                }
-                if (value === undefined || value === null) {
-                    return false;
-                }
-                if (value.getTime && filter.getTime)
-                    return value.getTime() > filter.getTime();
-                else
-                    return value > filter;
-            },
-            gte: function (value, filter) {
-                if (filter === undefined || filter === null) {
-                    return true;
-                }
-                if (value === undefined || value === null) {
-                    return false;
-                }
-                if (value.getTime && filter.getTime)
-                    return value.getTime() >= filter.getTime();
-                else
-                    return value >= filter;
-            }
-        };
     }
     Table.prototype.ngOnInit = function () {
         if (this.lazy && this.lazyLoadOnInit) {
             this.onLazyLoad.emit(this.createLazyLoadMetadata());
+            if (this.restoringFilter) {
+                this.restoringFilter = false;
+            }
         }
         this.initialized = true;
     };
@@ -962,6 +845,10 @@ var Table = /** @class */ (function () {
         return true;
     };
     Table.prototype._filter = function () {
+        if (!this.restoringFilter) {
+            this.first = 0;
+            this.firstChange.emit(this.first);
+        }
         if (this.lazy) {
             this.onLazyLoad.emit(this.createLazyLoadMetadata());
         }
@@ -996,7 +883,7 @@ var Table = /** @class */ (function () {
                             var filterValue = filterMeta.value;
                             var filterMatchMode = filterMeta.matchMode || 'startsWith';
                             var dataFieldValue = objectutils_1.ObjectUtils.resolveFieldData(this.value[i], filterField);
-                            var filterConstraint = this.filterConstraints[filterMatchMode];
+                            var filterConstraint = filterutils_1.FilterUtils[filterMatchMode];
                             if (!filterConstraint(dataFieldValue, filterValue)) {
                                 localMatch = false;
                             }
@@ -1008,7 +895,7 @@ var Table = /** @class */ (function () {
                     if (this.filters['global'] && !globalMatch && globalFilterFieldsArray) {
                         for (var j = 0; j < globalFilterFieldsArray.length; j++) {
                             var globalFilterField = globalFilterFieldsArray[j].field || globalFilterFieldsArray[j];
-                            globalMatch = this.filterConstraints[this.filters['global'].matchMode](objectutils_1.ObjectUtils.resolveFieldData(this.value[i], globalFilterField), this.filters['global'].value);
+                            globalMatch = filterutils_1.FilterUtils[this.filters['global'].matchMode](objectutils_1.ObjectUtils.resolveFieldData(this.value[i], globalFilterField), this.filters['global'].value);
                             if (globalMatch) {
                                 break;
                             }
@@ -1043,10 +930,6 @@ var Table = /** @class */ (function () {
         }
         if (this.restoringFilter) {
             this.restoringFilter = false;
-        }
-        else {
-            this.first = 0;
-            this.firstChange.emit(this.first);
         }
         this.cd.detectChanges();
     };
@@ -1168,7 +1051,7 @@ var Table = /** @class */ (function () {
                 if (_this.editingCell && !_this.editingCellClick && _this.isEditingCellValid()) {
                     domhandler_1.DomHandler.removeClass(_this.editingCell, 'ui-editing-cell');
                     _this.editingCell = null;
-                    _this.onEditComplete.emit({ field: _this.editingCellField, data: _this.editingCellData });
+                    _this.onEditComplete.emit({ field: _this.editingCellField, data: _this.editingCellData, originalEvent: event });
                     _this.editingCellField = null;
                     _this.editingCellData = null;
                     _this.unbindDocumentEditListener();
@@ -2103,10 +1986,14 @@ var TableBody = /** @class */ (function () {
         core_1.Input("pTableBodyTemplate"),
         __metadata("design:type", core_1.TemplateRef)
     ], TableBody.prototype, "template", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean)
+    ], TableBody.prototype, "frozen", void 0);
     TableBody = __decorate([
         core_1.Component({
             selector: '[pTableBody]',
-            template: "\n        <ng-container *ngIf=\"!dt.expandedRowTemplate\">\n            <ng-template ngFor let-rowData let-rowIndex=\"index\" [ngForOf]=\"(dt.paginator && !dt.lazy) ? ((dt.filteredValue||dt.value) | slice:dt.first:(dt.first + dt.rows)) : (dt.filteredValue||dt.value)\" [ngForTrackBy]=\"dt.rowTrackBy\">\n                <ng-container *ngTemplateOutlet=\"template; context: {$implicit: rowData, rowIndex: dt.paginator ? (dt.first + rowIndex) : rowIndex, columns: columns, editing: (dt.editMode === 'row' && dt.isRowEditing(rowData))}\"></ng-container>\n            </ng-template>\n        </ng-container>\n        <ng-container *ngIf=\"dt.expandedRowTemplate\">\n            <ng-template ngFor let-rowData let-rowIndex=\"index\" [ngForOf]=\"(dt.paginator && !dt.lazy) ? ((dt.filteredValue||dt.value) | slice:dt.first:(dt.first + dt.rows)) : (dt.filteredValue||dt.value)\" [ngForTrackBy]=\"dt.rowTrackBy\">\n                <ng-container *ngTemplateOutlet=\"template; context: {$implicit: rowData, rowIndex: dt.paginator ? (dt.first + rowIndex) : rowIndex, columns: columns, expanded: dt.isRowExpanded(rowData), editing: (dt.editMode === 'row' && dt.isRowEditing(rowData))}\"></ng-container>\n                <ng-container *ngIf=\"dt.isRowExpanded(rowData)\">\n                    <ng-container *ngTemplateOutlet=\"dt.expandedRowTemplate; context: {$implicit: rowData, rowIndex: dt.paginator ? (dt.first + rowIndex) : rowIndex, columns: columns}\"></ng-container>\n                </ng-container>\n            </ng-template>\n        </ng-container>\n        <ng-container *ngIf=\"dt.isEmpty()\">\n            <ng-container *ngTemplateOutlet=\"dt.emptyMessageTemplate; context: {$implicit: columns}\"></ng-container>\n        </ng-container>\n    "
+            template: "\n        <ng-container *ngIf=\"!dt.expandedRowTemplate\">\n            <ng-template ngFor let-rowData let-rowIndex=\"index\" [ngForOf]=\"(dt.paginator && !dt.lazy) ? ((dt.filteredValue||dt.value) | slice:dt.first:(dt.first + dt.rows)) : (dt.filteredValue||dt.value)\" [ngForTrackBy]=\"dt.rowTrackBy\">\n                <ng-container *ngTemplateOutlet=\"template; context: {$implicit: rowData, rowIndex: dt.paginator ? (dt.first + rowIndex) : rowIndex, columns: columns, editing: (dt.editMode === 'row' && dt.isRowEditing(rowData))}\"></ng-container>\n            </ng-template>\n        </ng-container>\n        <ng-container *ngIf=\"dt.expandedRowTemplate\">\n            <ng-template ngFor let-rowData let-rowIndex=\"index\" [ngForOf]=\"(dt.paginator && !dt.lazy) ? ((dt.filteredValue||dt.value) | slice:dt.first:(dt.first + dt.rows)) : (dt.filteredValue||dt.value)\" [ngForTrackBy]=\"dt.rowTrackBy\">\n                <ng-container *ngTemplateOutlet=\"template; context: {$implicit: rowData, rowIndex: dt.paginator ? (dt.first + rowIndex) : rowIndex, columns: columns, expanded: dt.isRowExpanded(rowData), editing: (dt.editMode === 'row' && dt.isRowEditing(rowData))}\"></ng-container>\n                <ng-container *ngIf=\"dt.isRowExpanded(rowData)\">\n                    <ng-container *ngTemplateOutlet=\"dt.expandedRowTemplate; context: {$implicit: rowData, rowIndex: dt.paginator ? (dt.first + rowIndex) : rowIndex, columns: columns}\"></ng-container>\n                </ng-container>\n            </ng-template>\n        </ng-container>\n        <ng-container *ngIf=\"dt.isEmpty()\">\n            <ng-container *ngTemplateOutlet=\"dt.emptyMessageTemplate; context: {$implicit: columns, frozen: frozen}\"></ng-container>\n        </ng-container>\n    "
         }),
         __metadata("design:paramtypes", [Table])
     ], TableBody);
@@ -2396,7 +2283,7 @@ var ScrollableView = /** @class */ (function () {
     ScrollableView = __decorate([
         core_1.Component({
             selector: '[pScrollableView]',
-            template: "\n        <div #scrollHeader class=\"ui-table-scrollable-header ui-widget-header\">\n            <div #scrollHeaderBox class=\"ui-table-scrollable-header-box\">\n                <table class=\"ui-table-scrollable-header-table\" [ngClass]=\"dt.tableStyleClass\" [ngStyle]=\"dt.tableStyle\">\n                    <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenColGroupTemplate||dt.colGroupTemplate : dt.colGroupTemplate; context {$implicit: columns}\"></ng-container>\n                    <thead class=\"ui-table-thead\">\n                        <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenHeaderTemplate||dt.headerTemplate : dt.headerTemplate; context {$implicit: columns}\"></ng-container>\n                    </thead>\n                    <tbody class=\"ui-table-tbody\">\n                        <ng-template ngFor let-rowData let-rowIndex=\"index\" [ngForOf]=\"dt.frozenValue\" [ngForTrackBy]=\"dt.rowTrackBy\">\n                            <ng-container *ngTemplateOutlet=\"dt.frozenRowsTemplate; context: {$implicit: rowData, rowIndex: rowIndex, columns: columns}\"></ng-container>\n                        </ng-template>\n                    </tbody>\n                </table>\n            </div>\n        </div>\n        <div #scrollBody class=\"ui-table-scrollable-body\">\n            <table #scrollTable [ngClass]=\"{'ui-table-scrollable-body-table': true, 'ui-table-virtual-table': dt.virtualScroll}\" [class]=\"dt.tableStyleClass\" [ngStyle]=\"dt.tableStyle\">\n                <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenColGroupTemplate||dt.colGroupTemplate : dt.colGroupTemplate; context {$implicit: columns}\"></ng-container>\n                <tbody class=\"ui-table-tbody\" [pTableBody]=\"columns\" [pTableBodyTemplate]=\"frozen ? dt.frozenBodyTemplate||dt.bodyTemplate : dt.bodyTemplate\"></tbody>\n            </table>\n            <table #loadingTable *ngIf=\"dt.virtualScroll && dt.loadingBodyTemplate != null\" [ngClass]=\"{'ui-table-scrollable-body-table ui-table-loading-virtual-table': true, 'ui-table-virtual-table': dt.virtualScroll}\">\n                <tbody class=\"ui-table-tbody\">\n                    <ng-template ngFor [ngForOf]=\"loadingArray\">\n                        <ng-container *ngTemplateOutlet=\"dt.loadingBodyTemplate; context: {columns: columns}\"></ng-container>\n                    </ng-template>\n                </tbody>\n            </table>\n            <div #virtualScroller class=\"ui-table-virtual-scroller\" *ngIf=\"dt.virtualScroll\"></div>\n        </div>\n        <div #scrollFooter *ngIf=\"dt.footerTemplate\" class=\"ui-table-scrollable-footer ui-widget-header\">\n            <div #scrollFooterBox class=\"ui-table-scrollable-footer-box\">\n                <table class=\"ui-table-scrollable-footer-table\" [ngClass]=\"dt.tableStyleClass\" [ngStyle]=\"dt.tableStyle\">\n                    <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenColGroupTemplate||dt.colGroupTemplate : dt.colGroupTemplate; context {$implicit: columns}\"></ng-container>\n                    <tfoot class=\"ui-table-tfoot\">\n                        <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenFooterTemplate||dt.footerTemplate : dt.footerTemplate; context {$implicit: columns}\"></ng-container>\n                    </tfoot>\n                </table>\n            </div>\n        </div>\n    "
+            template: "\n        <div #scrollHeader class=\"ui-table-scrollable-header ui-widget-header\">\n            <div #scrollHeaderBox class=\"ui-table-scrollable-header-box\">\n                <table class=\"ui-table-scrollable-header-table\" [ngClass]=\"dt.tableStyleClass\" [ngStyle]=\"dt.tableStyle\">\n                    <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenColGroupTemplate||dt.colGroupTemplate : dt.colGroupTemplate; context {$implicit: columns}\"></ng-container>\n                    <thead class=\"ui-table-thead\">\n                        <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenHeaderTemplate||dt.headerTemplate : dt.headerTemplate; context {$implicit: columns}\"></ng-container>\n                    </thead>\n                    <tbody class=\"ui-table-tbody\">\n                        <ng-template ngFor let-rowData let-rowIndex=\"index\" [ngForOf]=\"dt.frozenValue\" [ngForTrackBy]=\"dt.rowTrackBy\">\n                            <ng-container *ngTemplateOutlet=\"dt.frozenRowsTemplate; context: {$implicit: rowData, rowIndex: rowIndex, columns: columns}\"></ng-container>\n                        </ng-template>\n                    </tbody>\n                </table>\n            </div>\n        </div>\n        <div #scrollBody class=\"ui-table-scrollable-body\">\n            <table #scrollTable [ngClass]=\"{'ui-table-scrollable-body-table': true, 'ui-table-virtual-table': dt.virtualScroll}\" [class]=\"dt.tableStyleClass\" [ngStyle]=\"dt.tableStyle\">\n                <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenColGroupTemplate||dt.colGroupTemplate : dt.colGroupTemplate; context {$implicit: columns}\"></ng-container>\n                <tbody class=\"ui-table-tbody\" [pTableBody]=\"columns\" [pTableBodyTemplate]=\"frozen ? dt.frozenBodyTemplate||dt.bodyTemplate : dt.bodyTemplate\" [frozen]=\"frozen\"></tbody>\n            </table>\n            <table #loadingTable *ngIf=\"dt.virtualScroll && dt.loadingBodyTemplate != null\" [ngClass]=\"{'ui-table-scrollable-body-table ui-table-loading-virtual-table': true, 'ui-table-virtual-table': dt.virtualScroll}\">\n                <tbody class=\"ui-table-tbody\">\n                    <ng-template ngFor [ngForOf]=\"loadingArray\">\n                        <ng-container *ngTemplateOutlet=\"dt.loadingBodyTemplate; context: {columns: columns}\"></ng-container>\n                    </ng-template>\n                </tbody>\n            </table>\n            <div #virtualScroller class=\"ui-table-virtual-scroller\" *ngIf=\"dt.virtualScroll\"></div>\n        </div>\n        <div #scrollFooter *ngIf=\"dt.footerTemplate\" class=\"ui-table-scrollable-footer ui-widget-header\">\n            <div #scrollFooterBox class=\"ui-table-scrollable-footer-box\">\n                <table class=\"ui-table-scrollable-footer-table\" [ngClass]=\"dt.tableStyleClass\" [ngStyle]=\"dt.tableStyle\">\n                    <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenColGroupTemplate||dt.colGroupTemplate : dt.colGroupTemplate; context {$implicit: columns}\"></ng-container>\n                    <tfoot class=\"ui-table-tfoot\">\n                        <ng-container *ngTemplateOutlet=\"frozen ? dt.frozenFooterTemplate||dt.footerTemplate : dt.footerTemplate; context {$implicit: columns}\"></ng-container>\n                    </tfoot>\n                </table>\n            </div>\n        </div>\n    "
         }),
         __metadata("design:paramtypes", [Table, core_1.ElementRef, core_1.NgZone])
     ], ScrollableView);
@@ -3040,7 +2927,7 @@ var EditableColumn = /** @class */ (function () {
             if (event.keyCode == 13) {
                 if (this.dt.isEditingCellValid()) {
                     this.closeEditingCell();
-                    this.dt.onEditComplete.emit({ field: this.field, data: this.data });
+                    this.dt.onEditComplete.emit({ field: this.field, data: this.data, originalEvent: event });
                 }
                 event.preventDefault();
             }
@@ -3048,13 +2935,13 @@ var EditableColumn = /** @class */ (function () {
             else if (event.keyCode == 27) {
                 if (this.dt.isEditingCellValid()) {
                     this.closeEditingCell();
-                    this.dt.onEditCancel.emit({ field: this.field, data: this.data });
+                    this.dt.onEditCancel.emit({ field: this.field, data: this.data, originalEvent: event });
                 }
                 event.preventDefault();
             }
             //tab
             else if (event.keyCode == 9) {
-                this.dt.onEditComplete.emit({ field: this.field, data: this.data });
+                this.dt.onEditComplete.emit({ field: this.field, data: this.data, originalEvent: event });
                 if (event.shiftKey)
                     this.moveToPreviousCell(event);
                 else

@@ -17,6 +17,7 @@ var objectutils_1 = require("../utils/objectutils");
 var shared_1 = require("../common/shared");
 var forms_1 = require("@angular/forms");
 var scrolling_1 = require("@angular/cdk/scrolling");
+var filterutils_1 = require("../utils/filterutils");
 exports.MULTISELECT_VALUE_ACCESSOR = {
     provide: forms_1.NG_VALUE_ACCESSOR,
     useExisting: core_1.forwardRef(function () { return MultiSelect; }),
@@ -105,6 +106,7 @@ var MultiSelect = /** @class */ (function () {
         this.filterBy = 'label';
         this.showTransitionOptions = '225ms ease-out';
         this.hideTransitionOptions = '195ms ease-in';
+        this.filterMatchMode = "contains";
         this.onChange = new core_1.EventEmitter();
         this.onFocus = new core_1.EventEmitter();
         this.onBlur = new core_1.EventEmitter();
@@ -113,6 +115,7 @@ var MultiSelect = /** @class */ (function () {
         this.onPanelHide = new core_1.EventEmitter();
         this.onModelChange = function () { };
         this.onModelTouched = function () { };
+        this.disabledSelectedOptions = [];
     }
     Object.defineProperty(MultiSelect.prototype, "defaultLabel", {
         get: function () {
@@ -176,7 +179,13 @@ var MultiSelect = /** @class */ (function () {
         this.updateLabel();
         this.updateFilledState();
         this.setDisabledSelectedOptions();
+        this.checkSelectionLimit();
         this.cd.markForCheck();
+    };
+    MultiSelect.prototype.checkSelectionLimit = function () {
+        if (this.selectionLimit && (this.value && this.value.length === this.selectionLimit)) {
+            this.maxSelectionLimitReached = true;
+        }
     };
     MultiSelect.prototype.updateFilledState = function () {
         this.filled = (this.valuesAsString != null && this.valuesAsString.length > 0);
@@ -207,9 +216,7 @@ var MultiSelect = /** @class */ (function () {
             if (!this.selectionLimit || (!this.value || this.value.length < this.selectionLimit)) {
                 this.value = (this.value || []).concat([optionValue]);
             }
-            if (this.selectionLimit && (!this.value || this.value.length === this.selectionLimit)) {
-                this.maxSelectionLimitReached = true;
-            }
+            this.checkSelectionLimit();
         }
         this.onModelChange(this.value);
         this.onChange.emit({ originalEvent: event.originalEvent, value: this.value, itemValue: optionValue });
@@ -525,7 +532,7 @@ var MultiSelect = /** @class */ (function () {
     MultiSelect.prototype.activateFilter = function () {
         if (this.options && this.options.length) {
             var searchFields = this.filterBy.split(',');
-            this.visibleOptions = objectutils_1.ObjectUtils.filter(this.options, searchFields, this.filterValue);
+            this.visibleOptions = filterutils_1.FilterUtils.filter(this.options, searchFields, this.filterValue, this.filterMatchMode);
             this.filtered = true;
         }
     };
@@ -735,6 +742,10 @@ var MultiSelect = /** @class */ (function () {
         core_1.Input(),
         __metadata("design:type", String)
     ], MultiSelect.prototype, "ariaFilterLabel", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String)
+    ], MultiSelect.prototype, "filterMatchMode", void 0);
     __decorate([
         core_1.ViewChild('container', { static: false }),
         __metadata("design:type", core_1.ElementRef)

@@ -55,6 +55,7 @@ export declare class MultiSelect implements OnInit, AfterViewInit, AfterContentI
     showTransitionOptions: string;
     hideTransitionOptions: string;
     ariaFilterLabel: string;
+    filterMatchMode: string;
     containerViewChild: ElementRef;
     filterInputChild: ElementRef;
     footerFacet: any;
@@ -93,6 +94,7 @@ export declare class MultiSelect implements OnInit, AfterViewInit, AfterContentI
     ngAfterViewInit(): void;
     ngAfterViewChecked(): void;
     writeValue(value: any): void;
+    checkSelectionLimit(): void;
     updateFilledState(): void;
     registerOnChange(fn: Function): void;
     registerOnTouched(fn: Function): void;

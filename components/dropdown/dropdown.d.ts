@@ -52,6 +52,7 @@ export declare class Dropdown implements OnInit, AfterViewInit, AfterContentInit
     showTransitionOptions: string;
     hideTransitionOptions: string;
     ariaFilterLabel: string;
+    filterMatchMode: string;
     onChange: EventEmitter<any>;
     onFocus: EventEmitter<any>;
     onBlur: EventEmitter<any>;
@@ -65,8 +66,6 @@ export declare class Dropdown implements OnInit, AfterViewInit, AfterContentInit
     editableInputViewChild: ElementRef;
     templates: QueryList<any>;
     private _autoWidth;
-    private virtualAutoScrolled;
-    private virtualScrollSelectedIndex;
     autoWidth: boolean;
     private _disabled;
     disabled: boolean;
@@ -101,6 +100,9 @@ export declare class Dropdown implements OnInit, AfterViewInit, AfterContentInit
     previousSearchChar: string;
     currentSearchChar: string;
     documentResizeListener: any;
+    virtualAutoScrolled: boolean;
+    virtualScrollSelectedIndex: number;
+    viewPortOffsetTop: number;
     constructor(el: ElementRef, renderer: Renderer2, cd: ChangeDetectorRef, zone: NgZone);
     ngAfterContentInit(): void;
     ngOnInit(): void;
@@ -108,7 +110,7 @@ export declare class Dropdown implements OnInit, AfterViewInit, AfterContentInit
     ngAfterViewInit(): void;
     readonly label: string;
     updateEditableLabel(): void;
-    onItemClick(event: any, index: any): void;
+    onItemClick(event: any): void;
     selectItem(event: any, option: any): void;
     ngAfterViewChecked(): void;
     writeValue(value: any): void;
@@ -123,10 +125,11 @@ export declare class Dropdown implements OnInit, AfterViewInit, AfterContentInit
     onEditableInputChange(event: any): void;
     show(): void;
     onOverlayAnimationStart(event: AnimationEvent): void;
-    scrollToSelectedVirtualScrollElement(event: any): void;
+    scrollToSelectedVirtualScrollElement(): void;
+    updateVirtualScrollSelectedIndex(resetOffset: any): void;
     appendOverlay(): void;
     restoreOverlayAppend(): void;
-    hide(): void;
+    hide(event: any): void;
     alignOverlay(): void;
     onInputFocus(event: any): void;
     onInputBlur(event: any): void;

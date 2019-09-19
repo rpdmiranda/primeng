@@ -35,6 +35,7 @@ var AutoComplete = /** @class */ (function () {
         this.autoZIndex = true;
         this.baseZIndex = 0;
         this.dropdownIcon = "pi pi-caret-down";
+        this.unique = true;
         this.completeMethod = new core_1.EventEmitter();
         this.onSelect = new core_1.EventEmitter();
         this.onUnselect = new core_1.EventEmitter();
@@ -155,7 +156,8 @@ var AutoComplete = /** @class */ (function () {
     };
     AutoComplete.prototype.onInput = function (event) {
         var _this = this;
-        if (!this.inputKeyDown) {
+        // When an input element with a placeholder is clicked, the onInput event is invoked in IE.
+        if (!this.inputKeyDown && domhandler_1.DomHandler.isIE()) {
             return;
         }
         if (this.timeout) {
@@ -210,7 +212,7 @@ var AutoComplete = /** @class */ (function () {
         if (this.multiple) {
             this.multiInputEL.nativeElement.value = '';
             this.value = this.value || [];
-            if (!this.isSelected(option)) {
+            if (!this.isSelected(option) || !this.unique) {
                 this.value = this.value.concat([option]);
                 this.onModelChange(this.value);
             }
@@ -617,6 +619,10 @@ var AutoComplete = /** @class */ (function () {
         core_1.Input(),
         __metadata("design:type", String)
     ], AutoComplete.prototype, "dropdownIcon", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean)
+    ], AutoComplete.prototype, "unique", void 0);
     __decorate([
         core_1.Output(),
         __metadata("design:type", core_1.EventEmitter)

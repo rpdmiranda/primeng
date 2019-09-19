@@ -1,4 +1,4 @@
-import { ElementRef, AfterViewInit, OnDestroy, Renderer2, NgZone } from '@angular/core';
+import { ElementRef, AfterViewInit, OnDestroy, Renderer2, NgZone, EventEmitter } from '@angular/core';
 import { MenuItem } from '../common/menuitem';
 export declare class ContextMenuSub {
     item: MenuItem;
@@ -27,6 +27,8 @@ export declare class ContextMenu implements AfterViewInit, OnDestroy {
     autoZIndex: boolean;
     baseZIndex: number;
     triggerEvent: string;
+    onShow: EventEmitter<any>;
+    onHide: EventEmitter<any>;
     containerViewChild: ElementRef;
     documentClickListener: any;
     windowResizeListener: any;

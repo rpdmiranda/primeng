@@ -54,7 +54,7 @@ export declare class DataView implements OnInit, AfterContentInit, BlockableUI {
     isEmpty(): boolean;
     createLazyLoadMetadata(): any;
     getBlockableElement(): HTMLElement;
-    filter(filter: string): void;
+    filter(filter: string, filterMatchMode?: string): void;
     hasFilter(): boolean;
 }
 export declare class DataViewLayoutOptions {

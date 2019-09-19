@@ -316,11 +316,11 @@ var ConfirmDialog = /** @class */ (function () {
             animations: [
                 animations_1.trigger('animation', [
                     animations_1.state('void', animations_1.style({
-                        transform: 'translateX(-50%) translateY(-50%) translateZ(0) scale(0.7)',
+                        transform: 'translateX(-50%) translateY(-50%) scale(0.7)',
                         opacity: 0
                     })),
                     animations_1.state('visible', animations_1.style({
-                        transform: 'translateX(-50%) translateY(-50%) translateZ(0) scale(1)',
+                        transform: 'translateX(-50%) translateY(-50%) scale(1)',
                         opacity: 1
                     })),
                     animations_1.transition('* => *', animations_1.animate('{{transitionParams}}'))

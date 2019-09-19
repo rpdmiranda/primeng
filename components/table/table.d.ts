@@ -211,18 +211,6 @@ export declare class Table implements OnInit, AfterViewInit, AfterContentInit, B
     isFilterBlank(filter: any): boolean;
     _filter(): void;
     hasFilter(): boolean;
-    filterConstraints: {
-        startsWith(value: any, filter: any): boolean;
-        contains(value: any, filter: any): boolean;
-        endsWith(value: any, filter: any): boolean;
-        equals(value: any, filter: any): boolean;
-        notEquals(value: any, filter: any): boolean;
-        in(value: any, filter: any[]): boolean;
-        lt(value: any, filter: any): boolean;
-        lte(value: any, filter: any): boolean;
-        gt(value: any, filter: any): boolean;
-        gte(value: any, filter: any): boolean;
-    };
     createLazyLoadMetadata(): any;
     reset(): void;
     exportCSV(options?: any): void;
@@ -272,6 +260,7 @@ export declare class TableBody {
     dt: Table;
     columns: Column[];
     template: TemplateRef<any>;
+    frozen: boolean;
     constructor(dt: Table);
 }
 export declare class ScrollableView implements AfterViewInit, OnDestroy, AfterViewChecked {

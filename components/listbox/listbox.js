@@ -15,6 +15,7 @@ var shared_1 = require("../common/shared");
 var domhandler_1 = require("../dom/domhandler");
 var objectutils_1 = require("../utils/objectutils");
 var forms_1 = require("@angular/forms");
+var filterutils_1 = require("../utils/filterutils");
 exports.LISTBOX_VALUE_ACCESSOR = {
     provide: forms_1.NG_VALUE_ACCESSOR,
     useExisting: core_1.forwardRef(function () { return Listbox; }),
@@ -97,6 +98,7 @@ var Listbox = /** @class */ (function () {
         }
         this.onClick.emit({
             originalEvent: event,
+            option: option,
             value: this.value
         });
         this.optionTouched = false;
@@ -113,6 +115,7 @@ var Listbox = /** @class */ (function () {
         }
         this.onDblClick.emit({
             originalEvent: event,
+            option: option,
             value: this.value
         });
     };
@@ -294,15 +297,11 @@ var Listbox = /** @class */ (function () {
         if (this.filterValue) {
             var visible = void 0;
             var filterText = objectutils_1.ObjectUtils.removeAccents(this.filterValue).toLowerCase();
-            switch (this.filterMode) {
-                case 'startsWith':
-                    visible = objectutils_1.ObjectUtils.removeAccents(option.label).toLowerCase().indexOf(filterText) === 0;
-                    break;
-                case 'contains':
-                    visible = objectutils_1.ObjectUtils.removeAccents(option.label).toLowerCase().indexOf(filterText) > -1;
-                    break;
-                default:
-                    visible = true;
+            if (this.filterMode) {
+                visible = filterutils_1.FilterUtils[this.filterMode](option.label, this.filterValue);
+            }
+            else {
+                visible = true;
             }
             return visible;
         }

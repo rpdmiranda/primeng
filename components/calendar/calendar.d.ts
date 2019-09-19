@@ -207,6 +207,7 @@ export declare class Calendar implements OnInit, OnDestroy, ControlValueAccessor
     updateUI(): void;
     showOverlay(): void;
     hideOverlay(): void;
+    toggle(): void;
     onOverlayAnimationStart(event: AnimationEvent): void;
     onOverlayAnimationDone(event: AnimationEvent): void;
     appendOverlay(): void;

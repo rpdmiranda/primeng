@@ -204,6 +204,12 @@ var Spinner = /** @class */ (function () {
             }
             this.formattedValue = value.toString();
         }
+        else {
+            this.formattedValue = null;
+        }
+        if (this.inputfieldViewChild && this.inputfieldViewChild.nativeElement) {
+            this.inputfieldViewChild.nativeElement.value = this.formattedValue;
+        }
     };
     Spinner.prototype.clearTimer = function () {
         if (this.timer) {

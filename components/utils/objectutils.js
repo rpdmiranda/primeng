@@ -78,24 +78,6 @@ var ObjectUtils = /** @class */ (function () {
     ObjectUtils.isFunction = function (obj) {
         return !!(obj && obj.constructor && obj.call && obj.apply);
     };
-    ObjectUtils.filter = function (value, fields, filterValue) {
-        var filteredItems = [];
-        var filterText = this.removeAccents(filterValue).toLowerCase();
-        if (value) {
-            for (var _i = 0, value_1 = value; _i < value_1.length; _i++) {
-                var item = value_1[_i];
-                for (var _a = 0, fields_1 = fields; _a < fields_1.length; _a++) {
-                    var field = fields_1[_a];
-                    var fieldValue = this.removeAccents(String(this.resolveFieldData(item, field))).toLowerCase();
-                    if (fieldValue.indexOf(filterText) > -1) {
-                        filteredItems.push(item);
-                        break;
-                    }
-                }
-            }
-        }
-        return filteredItems;
-    };
     ObjectUtils.reorderArray = function (value, from, to) {
         var target;
         if (value && from !== to) {
@@ -107,9 +89,8 @@ var ObjectUtils = /** @class */ (function () {
         }
     };
     ObjectUtils.generateSelectItems = function (val, field) {
-        var selectItems;
+        var selectItems = [];
         if (val && val.length) {
-            selectItems = [];
             for (var _i = 0, val_1 = val; _i < val_1.length; _i++) {
                 var item = val_1[_i];
                 selectItems.push({ label: this.resolveFieldData(item, field), value: item });

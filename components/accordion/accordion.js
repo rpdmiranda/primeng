@@ -18,13 +18,25 @@ var common_1 = require("@angular/common");
 var shared_1 = require("../common/shared");
 var idx = 0;
 var AccordionTab = /** @class */ (function () {
-    function AccordionTab(accordion) {
+    function AccordionTab(accordion, changeDetector) {
+        this.changeDetector = changeDetector;
         this.cache = true;
         this.selectedChange = new core_1.EventEmitter();
         this.transitionOptions = '400ms cubic-bezier(0.86, 0, 0.07, 1)';
         this.id = "ui-accordiontab-" + idx++;
         this.accordion = accordion;
     }
+    Object.defineProperty(AccordionTab.prototype, "animating", {
+        get: function () {
+            return this._animating;
+        },
+        set: function (val) {
+            this._animating = val;
+            this.changeDetector.detectChanges();
+        },
+        enumerable: true,
+        configurable: true
+    });
     AccordionTab.prototype.ngAfterContentInit = function () {
         var _this = this;
         this.templates.forEach(function (item) {
@@ -145,7 +157,7 @@ var AccordionTab = /** @class */ (function () {
             ]
         }),
         __param(0, core_1.Inject(core_1.forwardRef(function () { return Accordion; }))),
-        __metadata("design:paramtypes", [Object])
+        __metadata("design:paramtypes", [Object, core_1.ChangeDetectorRef])
     ], AccordionTab);
     return AccordionTab;
 }());
@@ -193,9 +205,9 @@ var Accordion = /** @class */ (function () {
                 var changed = selected !== this.tabs[i].selected;
                 if (changed) {
                     this.tabs[i].animating = true;
+                    this.tabs[i].selected = selected;
+                    this.tabs[i].selectedChange.emit(selected);
                 }
-                this.tabs[i].selected = selected;
-                this.tabs[i].selectedChange.emit(selected);
             }
         }
     };

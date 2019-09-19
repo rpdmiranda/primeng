@@ -103,7 +103,7 @@ var OverlayPanel = /** @class */ (function () {
                 if (domhandler_1.DomHandler.getOffset(this.container).top < domhandler_1.DomHandler.getOffset(this.target).top) {
                     domhandler_1.DomHandler.addClass(this.container, 'ui-overlaypanel-flipped');
                 }
-                if (domhandler_1.DomHandler.getOffset(this.container).left < domhandler_1.DomHandler.getOffset(this.target).left &&
+                if (Math.floor(domhandler_1.DomHandler.getOffset(this.container).left) < Math.floor(domhandler_1.DomHandler.getOffset(this.target).left) &&
                     domhandler_1.DomHandler.getOffset(this.container).left > 0) {
                     domhandler_1.DomHandler.addClass(this.container, 'ui-overlaypanel-shifted');
                 }
