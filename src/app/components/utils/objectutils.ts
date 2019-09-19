@@ -100,9 +100,8 @@ export class ObjectUtils {
     }
 
     public static generateSelectItems(val: any[], field: string): SelectItem[] {
-        let selectItems: SelectItem[];
+        let selectItems: SelectItem[] = [];
         if(val && val.length) {
-            selectItems = [];
             for(let item of val) {
                 selectItems.push({label: this.resolveFieldData(item, field), value: item});
             }
@@ -172,7 +171,7 @@ export class ObjectUtils {
                     .replace(/[\xFE]/g, "p")
                     .replace(/[\xFD\xFF]/g, "y");
         }
-      
+
         return str;
       }
 }
